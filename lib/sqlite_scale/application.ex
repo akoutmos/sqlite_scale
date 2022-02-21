@@ -10,14 +10,18 @@ defmodule SqliteScale.Application do
     children = [
       # Start the Ecto repository
       SqliteScale.Repo,
+
+      # Start the split SQLite supervision tree
+      SqliteScale.DynamicRepoSupervisor,
+
       # Start the Telemetry supervisor
       SqliteScaleWeb.Telemetry,
+
       # Start the PubSub system
       {Phoenix.PubSub, name: SqliteScale.PubSub},
+
       # Start the Endpoint (http/https)
       SqliteScaleWeb.Endpoint
-      # Start a worker by calling: SqliteScale.Worker.start_link(arg)
-      # {SqliteScale.Worker, arg}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

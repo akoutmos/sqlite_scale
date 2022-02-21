@@ -4,9 +4,10 @@ defmodule SqliteScale.Accounts do
   """
 
   import Ecto.Query, warn: false
-  alias SqliteScale.Repo
 
   alias SqliteScale.Accounts.{User, UserToken, UserNotifier}
+  alias SqliteScale.DynamicRepoSupervisor.RepoSupervisor
+  alias SqliteScale.Repo
 
   ## Database getters
 
@@ -24,6 +25,10 @@ defmodule SqliteScale.Accounts do
   """
   def get_user_by_email(email) when is_binary(email) do
     Repo.get_by(User, email: email)
+  end
+
+  def list_users do
+    Repo.all(User)
   end
 
   @doc """
@@ -78,6 +83,14 @@ defmodule SqliteScale.Accounts do
     %User{}
     |> User.registration_changeset(attrs)
     |> Repo.insert()
+    |> case do
+      {:ok, %User{} = user} = result ->
+        RepoSupervisor.add_repo_to_supervisor(user)
+        result
+
+      error ->
+        error
+    end
   end
 
   @doc """
