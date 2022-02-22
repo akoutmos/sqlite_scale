@@ -4,6 +4,8 @@ defmodule SqliteScale.UserRepo.Migrations.AddTodoListTable do
   def change do
     create table(:todo_items) do
       add(:item, :string, null: false)
+
+      timestamps()
     end
   end
 end
