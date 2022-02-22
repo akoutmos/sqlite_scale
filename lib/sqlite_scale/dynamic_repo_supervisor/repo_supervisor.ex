@@ -70,7 +70,7 @@ defmodule SqliteScale.DynamicRepoSupervisor.RepoSupervisor do
     # Run any pending migrations
     user
     |> UserRepo.with_dynamic_repo(fn ->
-      Ecto.Migrator.run(UserRepo, :up, all: true, dynamic_repo: repo_pid) |> IO.inspect(label: "RAWR")
+      Ecto.Migrator.run(UserRepo, :up, all: true, dynamic_repo: repo_pid)
     end)
     |> case do
       [] ->
