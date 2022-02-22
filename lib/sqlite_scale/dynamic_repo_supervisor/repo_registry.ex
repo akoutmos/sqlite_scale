@@ -23,7 +23,7 @@ defmodule SqliteScale.DynamicRepoSupervisor.RepoRegistry do
   processes can be then interacted with via its PID.
   """
   def lookup_repo(%User{id: user_id}) do
-    case Registry.lookup(__MODULE__, user_id) do
+    case Registry.lookup(__MODULE__, Ecto.UUID.cast!(user_id)) do
       [{repo_pid, _}] ->
         {:ok, repo_pid}
 

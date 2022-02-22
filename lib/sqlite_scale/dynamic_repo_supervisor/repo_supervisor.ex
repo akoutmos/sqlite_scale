@@ -6,6 +6,8 @@ defmodule SqliteScale.DynamicRepoSupervisor.RepoSupervisor do
 
   use DynamicSupervisor
 
+  require Logger
+
   alias SqliteScale.Accounts.User
   alias SqliteScale.DynamicRepoSupervisor.RepoRegistry
   alias SqliteScale.UserRepo
@@ -31,7 +33,7 @@ defmodule SqliteScale.DynamicRepoSupervisor.RepoSupervisor do
     database_file =
       :sqlite_scale
       |> :code.priv_dir()
-      |> Path.join("/repo/user_repos/#{user_id}/")
+      |> Path.join("/user_repo/db_files/#{user_id}/")
       |> Path.join("user_data.db")
 
     repo_opts = [
@@ -48,6 +50,8 @@ defmodule SqliteScale.DynamicRepoSupervisor.RepoSupervisor do
     }
 
     {:ok, pid} = DynamicSupervisor.start_child(__MODULE__, child_spec)
+    run_migrations(user, pid)
+
     pid
   end
 
@@ -60,5 +64,20 @@ defmodule SqliteScale.DynamicRepoSupervisor.RepoSupervisor do
     |> Enum.reduce([], fn {_, repo_pid, _, _}, acc ->
       [repo_pid | acc]
     end)
+  end
+
+  defp run_migrations(user, repo_pid) do
+    # Run any pending migrations
+    user
+    |> UserRepo.with_dynamic_repo(fn ->
+      Ecto.Migrator.run(UserRepo, :up, all: true, dynamic_repo: repo_pid) |> IO.inspect(label: "RAWR")
+    end)
+    |> case do
+      [] ->
+        Logger.info("The database did not have any pending migrations")
+
+      migrations when is_list(migrations) ->
+        Logger.info("The database for UserRepo has applied the following migrations: #{Enum.join(migrations, ", ")}")
+    end
   end
 end
