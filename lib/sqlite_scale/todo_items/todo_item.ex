@@ -1,6 +1,6 @@
 defmodule SqliteScale.TodoItems.TodoItem do
   @moduledoc """
-  The todo item Ecto schema
+  The todo item ecto schema
   """
 
   use Ecto.Schema
@@ -9,13 +9,14 @@ defmodule SqliteScale.TodoItems.TodoItem do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "users" do
+  schema "todo_items" do
     field :item, :string
 
     timestamps()
   end
 
-  def create_changeset(%__MODULE__{} = todo_item, attrs) do
+  @doc false
+  def changeset(todo_item, attrs) do
     todo_item
     |> cast(attrs, [:item])
     |> validate_required([:item])

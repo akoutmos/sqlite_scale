@@ -1,0 +1,26 @@
+<h1>Listing Todo items</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Item</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for todo_item <- @todo_items do %>
+    <tr>
+      <td><%= todo_item.item %></td>
+
+      <td>
+        <span><%= link "Show", to: Routes.todo_item_path(@conn, :show, todo_item) %></span>
+        <span><%= link "Edit", to: Routes.todo_item_path(@conn, :edit, todo_item) %></span>
+        <span><%= link "Delete", to: Routes.todo_item_path(@conn, :delete, todo_item), method: :delete, data: [confirm: "Are you sure?"] %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Todo item", to: Routes.todo_item_path(@conn, :new) %></span>

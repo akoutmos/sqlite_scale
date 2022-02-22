@@ -1,0 +1,5 @@
+<h1>Edit Todo item</h1>
+
+<%= render "form.html", Map.put(assigns, :action, Routes.todo_item_path(@conn, :update, @todo_item)) %>
+
+<span><%= link "Back", to: Routes.todo_item_path(@conn, :index) %></span>
